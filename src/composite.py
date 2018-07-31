@@ -2,7 +2,9 @@ from behavior import Status, Behavior
 from typing import List
 
 class Composite(Behavior):
-    _children: List[Behavior] = []
+    def __init__(self,  name: str):
+        super().__init__(name)
+        self._children: List[Behavior] = []
 
     def add_child(self, child: Behavior):
         self._children.append(child)
@@ -14,7 +16,9 @@ class Composite(Behavior):
         self._children.clear()
 
 class Sequence(Composite):
-    _currentChild: int
+    def __init__(self,  name: str):
+        super().__init__(name)
+        self._currentChild: int
 
     def on_initialize(self):
         self._currentChild = 0
@@ -29,13 +33,16 @@ class Sequence(Composite):
             if self._currentChild == len(self._children): return Status.SUCCESS
 
 class Selector(Composite):
-    _currentChild: int
+    def __init__(self,  name: str):
+        super().__init__(name)
+        self._currentChild: int
 
     def on_initialize(self):
         self._currentChild = 0
 
     def update(self) -> Status:
         while True:
+            print(self._children)
             childStatus: Status = self._children[self._currentChild].tick()
             # if a child didn't fail, we're done
             if childStatus != Status.FAILURE: return childStatus
@@ -47,6 +54,9 @@ class Selector(Composite):
 # TODO: Monitor Composite
 
 class ActiveSelector(Selector):
+    def __init__(self, name: str):
+        super().__init__(name)
+
     def update(self) -> Status:
         previous: int = self._currentChild # store the current child
         super().on_initialize() # reset current to beginning

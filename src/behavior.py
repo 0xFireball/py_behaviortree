@@ -8,13 +8,14 @@ class Status(Enum):
     ABORTED     = 4
 
 class Behavior:
-    _status: Status = Status.INVALID
-    _name: str
-
-    def __init__(self, name=None):
+    def __init__(self,  name: str):
         if (name == None):
             name = self.__class__.__name__
-        self._name = name
+        self._status = Status.INVALID
+        self._name: str = name
+
+    def trace(self):
+        print(self._name)
 
     # abstract update
     def update(self) -> Status:
@@ -29,6 +30,7 @@ class Behavior:
     def tick(self) -> Status:
         if self._status != Status.RUNNING:
             self.on_initialize()
+        self.trace()
         self._status = self.update()
         if self._status != Status.RUNNING:
             self.on_terminate(self._status)

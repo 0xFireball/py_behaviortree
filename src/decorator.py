@@ -1,14 +1,14 @@
 from behavior import Status, Behavior
 
 class Decorator(Behavior):
-    _child: Behavior = None
-
-    def __init__(self, child: Behavior):
-        self._child = child
+    def __init__(self, child: Behavior, name: str):
+        super().__init__(name)
+        self._child: Behavior = child
 
 class Repeat(Decorator):
-    _limit = 0
-    _counter = 0
+    def __init__(self,  name: str):
+        self._limit = 0
+        self._counter = 0
 
     def on_initialize(self):
         self._counter = 0
