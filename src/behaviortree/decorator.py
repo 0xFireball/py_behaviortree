@@ -1,13 +1,15 @@
-from behavior import Status, Behavior
+from behaviortree.behavior import Status, Behavior
 
 class Decorator(Behavior):
     def __init__(self, child: Behavior, name: str):
         super().__init__(name)
+        child._parent = self
         self._child: Behavior = child
 
 class Repeat(Decorator):
-    def __init__(self,  name: str):
-        self._limit = 0
+    def __init__(self, child: Behavior, limit: int, name: str):
+        super().__init__(child, name)
+        self._limit = limit
         self._counter = 0
 
     def on_initialize(self):
@@ -21,7 +23,7 @@ class Repeat(Decorator):
             self._counter += 1
             if self._counter == self._limit: return Status.SUCCESS
             self._child.reset()
-        return Status.INVALID
+        return Status.RUNNING
 
     def set_count(self, count: int):
         self._limit = count

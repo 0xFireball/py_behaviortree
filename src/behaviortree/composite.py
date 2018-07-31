@@ -1,4 +1,4 @@
-from behavior import Status, Behavior
+from behaviortree.behavior import Status, Behavior
 from typing import List
 
 class Composite(Behavior):
