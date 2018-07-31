@@ -8,24 +8,30 @@ class Status(Enum):
     ABORTED     = 4
 
 class Behavior:
-    _status = Status.INVALID
+    _status: Status = Status.INVALID
+    _name: str
+
+    def __init__(self, name=None):
+        if (name == None):
+            name = self.__class__.__name__
+        self._name = name
 
     # abstract update
     def update(self) -> Status:
         return Status.INVALID
 
-    def onInitialize(self):
+    def on_initialize(self):
         pass
 
-    def onTerminate(self, status: Status):
+    def on_terminate(self, status: Status):
         pass
     
     def tick(self) -> Status:
         if self._status != Status.RUNNING:
-            self.onInitialize()
+            self.on_initialize()
         self._status = self.update()
         if self._status != Status.RUNNING:
-            self.onTerminate(self._status)
+            self.on_terminate(self._status)
         return self._status
 
     def reset(self):
@@ -33,12 +39,12 @@ class Behavior:
 
     def abort(self):
         self._status = Status.ABORTED
-        self.onTerminate(Status.ABORTED)
+        self.on_terminate(Status.ABORTED)
 
-    def isTerminated(self) -> bool:
-        return self._status == Status.SUCCESS | self._status == Status.FAILURE
+    def is_terminated(self) -> bool:
+        return self._status == Status.SUCCESS or self._status == Status.FAILURE
     
-    def isRunning(self) -> bool:
+    def is_running(self) -> bool:
         return self._status == Status.RUNNING
 
     def getStatus(self) -> Status:

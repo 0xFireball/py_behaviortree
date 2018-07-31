@@ -16,7 +16,7 @@ class Composite(Behavior):
 class Sequence(Composite):
     _currentChild: int
 
-    def onInitialize(self):
+    def on_initialize(self):
         self._currentChild = 0
 
     def update(self) -> Status:
@@ -31,7 +31,7 @@ class Sequence(Composite):
 class Selector(Composite):
     _currentChild: int
 
-    def onInitialize(self):
+    def on_initialize(self):
         self._currentChild = 0
 
     def update(self) -> Status:
@@ -49,7 +49,7 @@ class Selector(Composite):
 class ActiveSelector(Selector):
     def update(self) -> Status:
         previous: int = self._currentChild # store the current child
-        super().onInitialize() # reset current to beginning
+        super().on_initialize() # reset current to beginning
         result: Status = super().update() # run all nodes to possibly get a new current child
         # if previous isn't the end, and our new current differs from previous, terminate the previous
         if previous != len(self._children) - 1 and self._currentChild != previous: self._children[previous].onTerminate(Status.ABORTED)

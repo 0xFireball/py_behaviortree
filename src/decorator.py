@@ -10,18 +10,18 @@ class Repeat(Decorator):
     _limit = 0
     _counter = 0
 
-    def onInitialize(self):
+    def on_initialize(self):
         self._counter = 0
 
     def update(self) -> Status:
         while True:
-            _child.tick()
-            if _child.getStatus() == Status.RUNNING break
-            if _child.getStatus() == Status.FAILURE return Status.FAILURE
+            self._child.tick()
+            if self._child.getStatus() == Status.RUNNING: break
+            if self._child.getStatus() == Status.FAILURE: return Status.FAILURE
             self._counter += 1
-            if self._counter == self._limit return Status.SUCCESS
-            _child.reset()
+            if self._counter == self._limit: return Status.SUCCESS
+            self._child.reset()
         return Status.INVALID
 
-    def setCount(self, count: int):
+    def set_count(self, count: int):
         self._limit = count
