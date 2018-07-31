@@ -42,7 +42,6 @@ class Selector(Composite):
 
     def update(self) -> Status:
         while True:
-            print(self._children)
             childStatus: Status = self._children[self._currentChild].tick()
             # if a child didn't fail, we're done
             if childStatus != Status.FAILURE: return childStatus
