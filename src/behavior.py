@@ -8,11 +8,20 @@ class Status(Enum):
     ABORTED     = 4
 
 class Behavior:
-    def __init__(self,  name: str):
+    def __init__(self, name: str):
         if (name == None):
             name = self.__class__.__name__
         self._status = Status.INVALID
         self._name: str = name
+        self._parent = None
+        self._blackboard = None
+
+    def set_blackboard(self, data):
+        self._blackboard = data
+
+    def get_blackboard(self):
+        if self._blackboard != None: return self._blackboard
+        return self._parent.get_blackboard()
 
     def trace(self):
         print(self._name)

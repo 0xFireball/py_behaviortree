@@ -7,13 +7,16 @@ class Composite(Behavior):
         self._children: List[Behavior] = []
 
     def add_child(self, child: Behavior):
+        child._parent = self
         self._children.append(child)
 
     def remove_child(self, child: Behavior):
+        child._parent = None
         self._children.remove(child)
 
     def clear(self):
-        self._children.clear()
+        for child in self._children:
+            self.remove_child(child)
 
 class Sequence(Composite):
     def __init__(self,  name: str):
