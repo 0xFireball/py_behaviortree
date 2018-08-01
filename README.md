@@ -1,4 +1,5 @@
 
 # py_behaviortree
 
-see `doc/` for documentation.
+see `example/` for examples.
+see `doc/` for (incomplete) documentation.
