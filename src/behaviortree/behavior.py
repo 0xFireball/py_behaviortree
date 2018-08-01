@@ -15,6 +15,8 @@ class Behavior:
         self._name: str = name
         self._parent = None
         self._blackboard = None
+        # tracing
+        self._call_chain = None
 
     def set_blackboard(self, data):
         self._blackboard = data
@@ -23,8 +25,27 @@ class Behavior:
         if self._blackboard != None: return self._blackboard
         return self._parent.get_blackboard()
 
-    def trace(self):
-        print(self._name)
+    # enable tracing for this node (and below)
+    def set_trace(self, trace: bool):
+        if trace:
+            self._call_chain = []
+        else:
+            self._call_chain = None
+    
+    def begin_trace(self): # reset the call chain
+        if self._call_chain != None:
+            self._call_chain = []
+
+
+    def trace(self): # add the current node to the call chain list
+        chain = self._get_call_chain()
+        if chain != None:
+            chain.append(self)
+
+    # bubble up to get the call chain at the closest parent with tracing enabled
+    def _get_call_chain(self):
+        if self._call_chain != None: return self._call_chain
+        return self._parent._get_call_chain()
 
     # abstract update
     def update(self) -> Status:
@@ -39,7 +60,7 @@ class Behavior:
     def tick(self) -> Status:
         if self._status != Status.RUNNING:
             self.on_initialize()
-        self.trace()
+        self.trace() # for tracing the execution
         self._status = self.update()
         if self._status != Status.RUNNING:
             self.on_terminate(self._status)

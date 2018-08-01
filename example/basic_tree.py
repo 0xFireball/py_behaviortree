@@ -2,7 +2,7 @@ import common
 
 from enum import Enum
 from behaviortree.behavior import Status, Behavior
-from behaviortree.composite import Sequence, Selector
+from behaviortree.composite import Sequence, Selector, ActiveSelector
 from behaviortree.decorator import Repeat
 
 # demonstrate a basic tree
@@ -24,7 +24,7 @@ class SleepAction(Behavior):
 
     def update(self) -> Status:
         bb = self.get_blackboard()
-        if bb["energy"] > 0: return Status.FAILURE # only sleep if tired
+        if bb["energy"] > 4: return Status.FAILURE # only sleep if tired
         self._slept += 1
         if self._slept >= self._requiredSleep: # if we slept our required hours, we're done
             bb["energy"] = 16 # we're well rested
@@ -64,7 +64,7 @@ def build_tree() -> Behavior:
     }
 
     # root
-    tree_root = Selector("Root")
+    tree_root = ActiveSelector("Root")
     tree_root.set_blackboard(blackboard)
 
     # sleep
@@ -86,10 +86,15 @@ def build_tree() -> Behavior:
 
 # Execute the tree
 tree = build_tree()
+tree.set_trace(True)
 tick_count = 0
 while not tree.is_terminated():
+    tree.begin_trace()
     result = tree.tick()
     tick_count += 1
-    print(f"tick [{tick_count}]: {result}")
+    chain = list(map(lambda n: n._name, tree._call_chain))
+    print(f"tick[{tick_count}] {chain[-1]}: {result}")
+    print(f"    CallChain {chain}")
+    print()
 
 print(tree.get_blackboard())
