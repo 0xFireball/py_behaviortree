@@ -7,7 +7,7 @@ from behaviortree.decorator import Repeat
 
 # demonstrate a basic tree
 """
-- BasicTree[Selector]
+- BasicTree[ActiveSelector]
     |> Sleep
     |@ Work[Repeat]
         |- ChopCycle[Sequence]
