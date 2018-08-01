@@ -9,9 +9,10 @@ from behaviortree.decorator import Repeat
 """
 - BasicTree[Selector]
     |> Sleep
-    |- Work[Sequence]
-        |> Chop
-        |> Haul
+    |@ Work[Repeat]
+        |- ChopCycle[Sequence]
+            |> Chop
+            |> Haul
 """
 
 class SleepAction(Behavior):
@@ -86,13 +87,15 @@ def build_tree() -> Behavior:
 
 # Execute the tree
 tree = build_tree()
-tree.set_trace(True)
+tree.set_trace(True) # enable call chain tracing
 tick_count = 0
 while not tree.is_terminated():
-    tree.begin_trace()
+    tree.begin_trace() # clear the call chain list before we tick
     result = tree.tick()
     tick_count += 1
+    # condense the call chain in to a list of node names (n -> n.name)
     chain = list(map(lambda n: n._name, tree._call_chain))
+    # log the executing leaf node and status
     print(f"tick[{tick_count}] {chain[-1]}: {result}")
     print(f"    CallChain {chain}")
     print()
