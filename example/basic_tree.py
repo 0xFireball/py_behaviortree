@@ -8,7 +8,7 @@ from behaviortree.trace import dump_tree
 
 # demonstrate a basic tree
 """
-- BasicTree[ActiveSelector]
+|- BasicTree[ActiveSelector]
     |> Sleep
     |@ Work[Repeat]
         |- Lumberjack[Sequence]
