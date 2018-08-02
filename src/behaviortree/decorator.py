@@ -7,7 +7,7 @@ class Decorator(Behavior):
         self._child: Behavior = child
 
 class Repeat(Decorator):
-    def __init__(self, child: Behavior, limit: int, name: str):
+    def __init__(self, name: str, child: Behavior, limit: int):
         super().__init__(child, name)
         self._limit = limit
         self._counter = 0
