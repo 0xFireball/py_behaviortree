@@ -53,21 +53,38 @@ class Selector(Composite):
         return Status.RUNNING
 
 class Parallel(Composite):
-    def __init__(self,  name: str):
+    REQUIRE_ONE = 0
+    REQUIRE_ALL = 1
+
+    def __init__(self,  name: str, policy: int):
         super().__init__(name)
-        self._currentChild: int
+        self._policy = policy
 
     def on_initialize(self):
         self._currentChild = 0
 
     def update(self) -> Status:
-        while True:
-            childStatus: Status = self._children[self._currentChild].tick()
-            # if a child failed, we failed
-            if childStatus != Status.SUCCESS: return childStatus
-            self._currentChild += 1
-            # if we reached the end, we're done
-            if self._currentChild == len(self._children): return Status.SUCCESS
+        successes   = 0
+        failures    = 0
+        for child in self._children:
+            if not child.is_terminated():
+                child.tick()
+            if child._status == Status.SUCCESS:
+                successes += 1
+                if self._policy == Parallel.REQUIRE_ONE:
+                    return Status.SUCCESS
+            if child._status == Status.FAILURE:
+                failures += 1
+                if self._policy == Parallel.REQUIRE_ALL:
+                    return Status.FAILURE
+
+        if self._policy == Parallel.REQUIRE_ALL:
+            if successes + failures == len(self._children):
+                return Status.FAILURE
+            if successes == len(self._children):
+                return Status.SUCCESS
+
+        return Status.RUNNING
 
 class ParallelSelector(Composite):
     def __init__(self,  name: str):

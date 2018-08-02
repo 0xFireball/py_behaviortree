@@ -2,7 +2,7 @@ import common
 
 from enum import Enum
 from behaviortree.behavior import Status, Behavior
-from behaviortree.composite import Sequence, Selector, ActiveSelector
+from behaviortree.composite import Sequence, Selector, ActiveSelector, Parallel
 from behaviortree.decorator import Repeat
 from behaviortree.trace import dump_tree
 
@@ -10,10 +10,12 @@ from behaviortree.trace import dump_tree
 """
 |- BasicTree[ActiveSelector]
     |> Sleep
-    |@ Work[Repeat]
-        |- Lumberjack[Sequence]
-            |> Chop
-            |> Haul
+    |- Awake[Parallel]
+        |> Breathe
+        |@ Work[Repeat]
+            |- Lumberjack[Sequence]
+                |> Chop
+                |> Haul
 """
 
 class SleepAction(Behavior):
@@ -57,6 +59,14 @@ class HaulAction(Behavior):
         bb["wood"] = 0 # deposit the wood
         return Status.SUCCESS
 
+class BreatheAction(Behavior):
+    def __init__(self):
+        super().__init__(None)
+
+    def update(self) -> Status:
+        # not much to see here
+        return Status.RUNNING
+
 def build_tree() -> Behavior:
     # blackboard
     blackboard = {
@@ -80,9 +90,17 @@ def build_tree() -> Behavior:
     tree_work.add_child(leaf_haul)
     tree_work_repeat = Repeat("Work", tree_work, -1)
 
+    # breathe
+    leaf_breathe = BreatheAction()
+    
+    # awake
+    tree_awake = Parallel("Awake", Parallel.REQUIRE_ALL)
+    tree_awake.add_child(leaf_breathe)
+    tree_awake.add_child(tree_work_repeat)
+
     # finish root
     tree_root.add_child(leaf_sleep)
-    tree_root.add_child(tree_work_repeat)
+    tree_root.add_child(tree_awake)
 
     return tree_root
 
@@ -114,7 +132,7 @@ if __name__ == "__main__":
         # log the executing leaf node and status
         print(f"tick[{tick_count}] {chain[-1]}: {result}")
         print(f"    CallChain {chain}")
-        print(f"    Exeucting {executing}")
+        print(f"    Execucting {executing}")
         print()
 
     print(tree.get_blackboard())
