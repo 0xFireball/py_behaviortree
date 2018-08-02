@@ -16,13 +16,12 @@ class Repeat(Decorator):
         self._counter = 0
 
     def update(self) -> Status:
-        while True:
-            self._child.tick()
-            if self._child.getStatus() == Status.RUNNING: break
-            if self._child.getStatus() == Status.FAILURE: return Status.FAILURE
-            self._counter += 1
-            if self._counter == self._limit: return Status.SUCCESS
-            self._child.reset()
+        self._child.tick()
+        if self._child.getStatus() == Status.RUNNING: return Status.RUNNING
+        if self._child.getStatus() == Status.FAILURE: return Status.FAILURE
+        self._counter += 1
+        if self._counter == self._limit: return Status.SUCCESS
+        self._child.reset()
         return Status.RUNNING
 
     def set_count(self, count: int):
