@@ -26,3 +26,13 @@ class Repeat(Decorator):
 
     def set_count(self, count: int):
         self._limit = count
+
+class AlwaysStatus(Decorator):
+    def __init__(self, name: str, child: Behavior, status: Status):
+        super().__init__(child, name)
+        self._always = status
+
+    def update(self) -> Status:
+        self._child.tick()
+        if self._child.is_terminated(): return self._always
+        return Status.RUNNING
