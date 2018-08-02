@@ -27,6 +27,40 @@ class Sequence(Composite):
         self._currentChild = 0
 
     def update(self) -> Status:
+        childStatus: Status = self._children[self._currentChild].tick()
+        # if a child failed, we failed
+        if childStatus != Status.SUCCESS: return childStatus
+        self._currentChild += 1
+        # if we reached the end, we're done
+        if self._currentChild == len(self._children): return Status.SUCCESS
+        return Status.RUNNING
+
+class Selector(Composite):
+    def __init__(self,  name: str):
+        super().__init__(name)
+        self._currentChild: int
+
+    def on_initialize(self):
+        self._currentChild = 0
+
+    def update(self) -> Status:
+        childStatus: Status = self._children[self._currentChild].tick()
+        # if a child didn't fail, we're done
+        if childStatus != Status.FAILURE: return childStatus
+        self._currentChild += 1
+        # if we reached the end without any completion, fail
+        if self._currentChild == len(self._children): return Status.FAILURE
+        return Status.RUNNING
+
+class Parallel(Composite):
+    def __init__(self,  name: str):
+        super().__init__(name)
+        self._currentChild: int
+
+    def on_initialize(self):
+        self._currentChild = 0
+
+    def update(self) -> Status:
         while True:
             childStatus: Status = self._children[self._currentChild].tick()
             # if a child failed, we failed
@@ -35,7 +69,7 @@ class Sequence(Composite):
             # if we reached the end, we're done
             if self._currentChild == len(self._children): return Status.SUCCESS
 
-class Selector(Composite):
+class ParallelSelector(Composite):
     def __init__(self,  name: str):
         super().__init__(name)
         self._currentChild: int
@@ -52,10 +86,7 @@ class Selector(Composite):
             # if we reached the end without any completion, fail
             if self._currentChild == len(self._children): return Status.FAILURE
 
-# TODO: Parallel Composite
-# TODO: Monitor Composite
-
-class ActiveSelector(Selector):
+class ActiveSelector(ParallelSelector):
     def __init__(self, name: str):
         super().__init__(name)
 
