@@ -1,5 +1,5 @@
 from behaviortree.behavior import Behavior
-from behaviortree.composite import Selector, Sequence, Parallel, ParallelSelector, ActiveSelector
+from behaviortree.composite import Composite, Selector, Sequence, Parallel, ParallelSelector, ActiveSelector
 from behaviortree.decorator import Repeat
 from typing import List
 
@@ -25,6 +25,9 @@ class BehaviorTreeBuilder:
 
     def activeSelector(self, name: str):
         self._stack.append(ActiveSelector(name))
+
+    def composite(self, composite: Composite):
+        self._stack.append(composite)
 
     def decorator(self, type, name: str, *args):
         self._decorators.append((type, name, args))
