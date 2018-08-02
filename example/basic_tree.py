@@ -86,10 +86,22 @@ def build_tree() -> Behavior:
 
     return tree_root
 
+def parse_executing(call_chain):
+    executing = []
+    for node in call_chain:
+        # check node type
+        is_composite = hasattr(node, "_children")
+        is_decorator = hasattr(node, "_child")
+        if not is_composite and not is_decorator:
+            if node._status == Status.RUNNING:
+                executing.append(node)
+    return executing
+
 if __name__ == "__main__":
     # execute the tree
     tree = build_tree()
     dump_tree(tree)
+    print()
     tree.set_trace(True) # enable call chain tracing
     tick_count = 0
     while not tree.is_terminated():
@@ -98,9 +110,11 @@ if __name__ == "__main__":
         tick_count += 1
         # condense the call chain in to a list of node names (n -> n.name)
         chain = list(map(lambda n: n._name, tree._call_chain))
+        executing = list(map(lambda n: n._name, parse_executing(tree._call_chain)))
         # log the executing leaf node and status
         print(f"tick[{tick_count}] {chain[-1]}: {result}")
         print(f"    CallChain {chain}")
+        print(f"    Exeucting {executing}")
         print()
 
     print(tree.get_blackboard())
