@@ -64,5 +64,5 @@ class ActiveSelector(Selector):
         super().on_initialize() # reset current to beginning
         result: Status = super().update() # run all nodes to possibly get a new current child
         # if previous isn't the end, and our new current differs from previous, terminate the previous
-        if previous != len(self._children) - 1 and self._currentChild != previous: self._children[previous].on_terminate(Status.ABORTED)
+        if previous != len(self._children) - 1 and self._currentChild != previous: self._children[previous].abort()
         return result
