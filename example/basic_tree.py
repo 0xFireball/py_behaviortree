@@ -4,6 +4,7 @@ from enum import Enum
 from behaviortree.behavior import Status, Behavior
 from behaviortree.composite import Sequence, Selector, ActiveSelector
 from behaviortree.decorator import Repeat
+from behaviortree.trace import dump_tree
 
 # demonstrate a basic tree
 """
@@ -85,8 +86,9 @@ def build_tree() -> Behavior:
 
     return tree_root
 
-# Execute the tree
+# execute the tree
 tree = build_tree()
+dump_tree(tree)
 tree.set_trace(True) # enable call chain tracing
 tick_count = 0
 while not tree.is_terminated():
