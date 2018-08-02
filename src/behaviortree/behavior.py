@@ -14,16 +14,16 @@ class Behavior:
         self._status = Status.INVALID
         self._name: str = name
         self._parent = None
-        self._blackboard = None
+        self._blackboards = {}
         # tracing
         self._call_chain = None
 
-    def set_blackboard(self, data):
-        self._blackboard = data
+    def set_blackboard(self, data, name: str = ''):
+        self._blackboards[name] = data
 
-    def get_blackboard(self):
-        if self._blackboard != None: return self._blackboard
-        return self._parent.get_blackboard()
+    def get_blackboard(self, name: str = ''):
+        if name in self._blackboards: return self._blackboards[name]
+        return self._parent.get_blackboard(name)
 
     # enable tracing for this node (and below)
     def set_trace(self, trace: bool):
