@@ -9,14 +9,16 @@ from behaviortree.trace import dump_tree
 
 def build_tree() -> Behavior:
     builder = BehaviorTreeBuilder()
-    builder.activeSelector("BasicTree")
-    builder.action(SleepAction(8))
-    builder.decorator(Repeat, 'Work', -1)
-    builder.sequence("Lumberjack")
-    builder.action(ChopAction(4))
-    builder.action(HaulAction())
-    builder.decorate()
-    builder.endComposite()
+    builder.activeSelector("BasicTree") # level 0
+    if 1:
+        builder.action(SleepAction(8))
+        builder.decorator(Repeat, 'Work', -1)
+        builder.sequence("Lumberjack") # level 1
+        if 1:
+            builder.action(ChopAction(4))
+            builder.action(HaulAction())
+        builder.decorate()
+    builder.endComposite() # level 0
 
     return builder.build()
 

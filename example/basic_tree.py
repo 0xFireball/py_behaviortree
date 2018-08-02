@@ -78,7 +78,7 @@ def build_tree() -> Behavior:
     tree_work = Sequence("Lumberjack")
     tree_work.add_child(leaf_chop)
     tree_work.add_child(leaf_haul)
-    tree_work_repeat = Repeat(tree_work, -1, "Work")
+    tree_work_repeat = Repeat("Work", tree_work, -1)
 
     # finish root
     tree_root.add_child(leaf_sleep)
