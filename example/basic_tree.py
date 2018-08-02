@@ -111,9 +111,16 @@ def parse_executing(call_chain):
         is_composite = hasattr(node, "_children")
         is_decorator = hasattr(node, "_child")
         if not is_composite and not is_decorator:
-            if node._status == Status.RUNNING:
-                executing.append(node)
+            executing.append(node)
     return executing
+
+def crunch_status(status: Status):
+    if status == status.SUCCESS:
+        return 'S'
+    if status == status.FAILURE:
+        return 'F'
+    if status == status.RUNNING:
+        return 'R'
 
 if __name__ == "__main__":
     # execute the tree
@@ -128,11 +135,11 @@ if __name__ == "__main__":
         tick_count += 1
         # condense the call chain in to a list of node names (n -> n.name)
         chain = list(map(lambda n: n._name, tree._call_chain))
-        executing = list(map(lambda n: n._name, parse_executing(tree._call_chain)))
+        executing = list(map(lambda n: f"{n._name}:{crunch_status(n._status)}", parse_executing(tree._call_chain)))
         # log the executing leaf node and status
         print(f"tick[{tick_count}] {chain[-1]}: {result}")
         print(f"    CallChain {chain}")
-        print(f"    Execucting {executing}")
+        print(f"    Executing {executing}")
         print()
 
     print(tree.get_blackboard())
