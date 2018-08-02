@@ -17,8 +17,8 @@ class BehaviorTreeBuilder:
     def sequence(self, name: str):
         self._stack.append(Sequence(name))
 
-    def parallel(self, name: str):
-        self._stack.append(Parallel(name))
+    def parallel(self, name: str, policy: int):
+        self._stack.append(Parallel(name, policy))
 
     def parallelSelector(self, name: str):
         self._stack.append(ParallelSelector(name))
