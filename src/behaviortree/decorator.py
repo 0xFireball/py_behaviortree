@@ -36,3 +36,16 @@ class AlwaysStatus(Decorator):
         self._child.tick()
         if self._child.is_terminated(): return self._always
         return Status.RUNNING
+
+class Inverter(Decorator):
+    def __init__(self, name: str, child: Behavior):
+        super().__init__(child, name)
+
+    def update(self) -> Status:
+        self._child.tick()
+        if self._child.is_terminated():
+            if self._child._status == Status.SUCCESS:
+                return Status.FAILURE
+            elif self._child._status == Status.FAILURE:
+                return Status.SUCCESS
+        return Status.RUNNING
