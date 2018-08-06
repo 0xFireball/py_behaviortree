@@ -73,10 +73,10 @@ class Parallel(Composite):
         successes   = 0
         failures    = 0
         for child in self._children:
-            wasterm = f"wt({child.is_terminated()})"
+            # wasterm = f"wt({child.is_terminated()})"
             if not child.is_terminated():
                 child.tick()
-            print(child, wasterm, child._status)
+            # print(child, wasterm, child._status)
             if child._status == Status.SUCCESS:
                 successes += 1
                 if self._policy == Parallel.REQUIRE_ONE:
@@ -124,7 +124,7 @@ class ActiveSelector(ParallelSelector):
             child = self._children[self._currentChild]
             if child.is_terminated() and child._status == Status.FAILURE:
                 # reset if failed previously
-                print('RESET', child)
+                # print('RESET', child)
                 child.reset()
             childStatus: Status = child.tick()
             # if a child didn't fail, we're done

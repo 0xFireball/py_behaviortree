@@ -1,5 +1,7 @@
 import common
 
+from common import parse_executing, crunch_status
+
 from enum import Enum
 from behaviortree.behavior import Status, Behavior
 from behaviortree.composite import Sequence, Selector, ActiveSelector, Parallel
@@ -21,7 +23,7 @@ from behaviortree.trace import dump_tree
 """
 
 class SleepAction(Behavior):
-    def __init__(self, requiredSleep: int):        
+    def __init__(self, requiredSleep: int):
         super().__init__(None)
         self._requiredSleep: int = requiredSleep
 
@@ -119,25 +121,6 @@ def build_tree() -> Behavior:
     tree_root.add_child(tree_awake)
 
     return tree_root
-
-def parse_executing(call_chain):
-    executing = []
-    for node in call_chain:
-        # check node type
-        is_composite = hasattr(node, "_children")
-        is_decorator = hasattr(node, "_child")
-        if not is_composite and not is_decorator:
-            executing.append(node)
-    return executing
-
-def crunch_status(status: Status):
-    if status == status.SUCCESS:
-        return 'S'
-    if status == status.FAILURE:
-        return 'F'
-    if status == status.RUNNING:
-        return 'R'
-    return status
 
 if __name__ == "__main__":
     # execute the tree
