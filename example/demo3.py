@@ -73,8 +73,8 @@ if __name__ == "__main__":
         result = tree.tick()
         tick_count += 1
         # condense the call chain in to a list of node names (n -> n.name)
-        chain = list(map(lambda n: f"{n._name}:{crunch_status(n._status)}", tree._call_chain))
-        executing = list(map(lambda n: f"{n._name}:{crunch_status(n._status)}", parse_executing(tree._call_chain)))
+        chain = list(map(lambda n: f"{n[0]._name}:{crunch_status(n[1])}", tree._call_chain))
+        executing = list(map(lambda n: f"{n[0]._name}:{crunch_status(n[1])}", parse_executing(tree._call_chain)))
         # log the executing leaf node and status
         print(f"tick[{tick_count}] {chain[-1]}: {result}")
         print(f"    CallChain {chain}")
