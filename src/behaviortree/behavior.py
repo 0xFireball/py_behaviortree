@@ -40,7 +40,14 @@ class Behavior:
     def trace(self): # add the current node to the call chain list
         chain = self._get_call_chain()
         if chain != None:
-            chain.append(self)
+            chain.append((self, self._status))
+            return len(chain)
+
+    def update_trace(self, index):
+        chain = self._get_call_chain()
+        if chain != None:
+            # save the new item
+            chain[index - 1] = (self, self._status)
 
     # bubble up to get the call chain at the closest parent with tracing enabled
     def _get_call_chain(self):
@@ -60,8 +67,10 @@ class Behavior:
     def tick(self) -> Status:
         if self._status != Status.RUNNING:
             self.on_initialize()
-        self.trace() # for tracing the execution
+        trace_index = self.trace() # for tracing the execution
         self._status = self.update()
+        # update traced status
+        self.update_trace(trace_index)
         if self._status != Status.RUNNING:
             self.on_terminate(self._status)
         return self._status
