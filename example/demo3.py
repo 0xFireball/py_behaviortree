@@ -54,7 +54,6 @@ def build_tree() -> Behavior:
             builder.action(VacationAction(2))
             builder.action(BuyCarAction(4))
         builder.endComposite()
-        print(builder._stack)
         builder.action(SaveMoneyAction(8))
 
     tree = builder.build()
