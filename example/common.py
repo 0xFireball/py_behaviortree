@@ -14,10 +14,14 @@ def parse_executing(call_chain):
     return executing
 
 def crunch_status(status: Status):
-    if status == status.SUCCESS:
+    if status == Status.SUCCESS:
         return 'S'
-    if status == status.FAILURE:
+    if status == Status.FAILURE:
         return 'F'
-    if status == status.RUNNING:
+    if status == Status.RUNNING:
         return 'R'
+    if status == Status.ABORTED:
+        return 'A'
+    if status == Status.INVALID:
+        return 'I'
     return status

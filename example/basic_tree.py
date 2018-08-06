@@ -11,9 +11,7 @@ from behaviortree.trace import dump_tree
 # demonstrate a basic tree
 """
 |- BasicTree[ActiveSelector]
-    |- Rest[Parallel]
-        |> Sleep
-        |> Dream
+    |> Sleep
     |- Awake[Parallel]
         |> Breathe
         |@ Work[Repeat]
@@ -37,14 +35,6 @@ class SleepAction(Behavior):
         if self._slept >= self._requiredSleep: # if we slept our required hours, we're done
             bb["energy"] = 16 # we're well rested
             return Status.SUCCESS
-        return Status.RUNNING
-
-class DreamAction(Behavior):
-    def __init__(self):
-        super().__init__(None)
-
-    def update(self) -> Status:
-        # not much to see here
         return Status.RUNNING
 
 class ChopAction(Behavior):
@@ -93,12 +83,6 @@ def build_tree() -> Behavior:
 
     # sleep
     leaf_sleep = SleepAction(8)
-    # dream
-    leaf_dream = DreamAction()
-    # rest
-    tree_rest = Parallel("Rest", Parallel.REQUIRE_ONE, True)
-    tree_rest.add_child(leaf_sleep)
-    tree_rest.add_child(leaf_dream)
 
     # work
     leaf_chop = ChopAction(4)
@@ -117,7 +101,7 @@ def build_tree() -> Behavior:
     tree_awake.add_child(tree_work_repeat)
 
     # finish root
-    tree_root.add_child(tree_rest)
+    tree_root.add_child(leaf_sleep)
     tree_root.add_child(tree_awake)
 
     return tree_root
