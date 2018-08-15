@@ -8,19 +8,37 @@
 ```py
 def build_tree() -> Behavior:
     builder = BehaviorTreeBuilder()
+    
     builder.activeSelector("BasicTree")
-    builder.action(SleepAction(8))
-    builder.decorator(Repeat, 'Work', -1)
-    builder.sequence("Lumberjack")
-    builder.action(ChopAction(4))
-    builder.action(HaulAction())
-    builder.decorate()
+    if 1:
+        builder.action(SleepAction(8))
+        builder.decorator(Repeat, 'Work', -1)
+        builder.sequence("Lumberjack")
+        if 1:
+            builder.action(ChopAction(4))
+            builder.action(HaulAction())
+        builder.decorate()
     builder.endComposite()
 
     return builder.build()
 ```
 
+This builds a tree to look like this:
+```
+  |- BasicTree[ActiveSelector]
+    |> SleepAction[]
+    |@ Work[Repeat]
+      |- Lumberjack[Sequence]
+        |> ChopAction[]
+        |> HaulAction[]
+```
+
+Use `dump_tree` from `behaviortree.trace` to automatically pretty-print trees like above.
+
 ## Guide
+
+### The `if 1:` thing
+This is a stupid solution to allow indenting to show tree structure, since Python cares about whitespace (why?)
 
 ### Composites
 

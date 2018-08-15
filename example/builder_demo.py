@@ -9,6 +9,7 @@ from behaviortree.trace import dump_tree
 
 def build_tree() -> Behavior:
     builder = BehaviorTreeBuilder()
+    
     builder.activeSelector("BasicTree")
     if 1:
         builder.action(SleepAction(8))
