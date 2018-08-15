@@ -16,7 +16,7 @@ class Behavior:
         self._parent = None
         self._blackboards = {}
         # tracing
-        self._call_chain = None
+        self._call_chain = []
 
     def set_blackboard(self, data, name: str = ''):
         self._blackboards[name] = data
@@ -25,12 +25,13 @@ class Behavior:
         if name in self._blackboards: return self._blackboards[name]
         return self._parent.get_blackboard(name)
 
+    # tracing is enabled by default
     # enable tracing for this node (and below)
-    def set_trace(self, trace: bool):
-        if trace:
-            self._call_chain = []
-        else:
-            self._call_chain = None
+    # def set_trace(self, trace: bool):
+    #     if trace:
+    #         self._call_chain = []
+    #     else:
+    #         self._call_chain = None
     
     def begin_trace(self): # reset the call chain
         if self._call_chain != None:

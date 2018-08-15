@@ -111,7 +111,6 @@ if __name__ == "__main__":
     tree = build_tree()
     dump_tree(tree)
     print()
-    tree.set_trace(True) # enable call chain tracing
     tick_count = 0
     while not tree.is_terminated():
         tree.begin_trace() # clear the call chain list before we tick
